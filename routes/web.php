@@ -4,9 +4,10 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// Route::get('/', function () {
+//     return view('welcome',[ProductController::class,'index' =>'products']);
+// });
+Route::get('/', [ProductController::class,'welcome'])->name('welcome');
 Route::get('/product', [ProductController::class,'index'])->name('product.index');
 
 Route::get('/dashboard', function () {

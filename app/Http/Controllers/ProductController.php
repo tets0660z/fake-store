@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class ProductController extends Controller
 {
@@ -14,8 +15,27 @@ class ProductController extends Controller
     public function index()
     {
         $products = (Http::get('https://fakestoreapi.com/products'))->json();
-        return view('product/index',compact('products'));
+        $products = $this->paginate($products);
+        return view('product.index',compact('products'));
 
+    }
+    public function welcome()
+    {
+        $products = (Http::get('https://fakestoreapi.com/products?limit=5'))->json();
+        // $products = $this->paginate($products);
+        return view('welcome',compact('products'));
+
+    }
+       /**
+     * Paginate an array of items.
+     *
+     * @return LengthAwarePaginator         The paginated items.
+     */
+    private function paginate(array $items, int $perPage =10, ?int $page = null, $options = []): LengthAwarePaginator
+    {
+        $page = $page ?: (LengthAwarePaginator::resolveCurrentPage() ?: 1);
+        $items = collect($items);
+        return new LengthAwarePaginator($items->forPage($page, $perPage), $items->count(), $perPage, $page, $options);
     }
 
     /**
